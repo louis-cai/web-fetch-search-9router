@@ -14,7 +14,7 @@ lives on the existing **Plugins** screen (Plugins → Installed plugins →
 | `ctx.web` search | provider id `9router` → `POST /v1/search` |
 | `ctx.web` fetch | provider id `9router` → `POST /v1/web/fetch` |
 | Client | configuration card registered in `plugins.row.config` / `plugins.bundle.config`, so the Plugins screen edits host, API key, scope, result count, and timeout |
-| Host bridge | `GET`/`POST /webfetch-9router/config` behind the browser-trust fence, used by that card and backed by the Harness config editor |
+| Host bridge | `GET`/`POST /9router-web-provider/config` behind the browser-trust fence, used by that card and backed by the Harness config editor |
 
 The Host plugin (`index.js`) registers both providers and then points the web
 service's provider selection at them:
@@ -80,8 +80,8 @@ existing Plugins screen.
 Bundle defaults:
 
 ```yaml
-- id: webfetch-9router
-  name: '@local/webfetch-9router'
+- id: 9router-web-provider
+  name: 'dsh-9router-web-provider'
   config:
     baseUrl: 'http://localhost:20128'   # the 9router default local port
     apiKey: ''                          # no credential ships with the bundle
@@ -94,7 +94,7 @@ There is **no API key out of the box**: the bundle registers its providers but
 leaves the web provider selection alone until a key is configured, so the
 agent's web tools keep their previous backend. Set the gateway on the Plugins
 screen (recommended) or with a profile override row targeting
-`name: '@local/webfetch-9router'`; a matching override replaces the whole
+`name: 'dsh-9router-web-provider'`; a matching override replaces the whole
 config object, so repeat every field you want to keep. Once an API key is
 present the plugin takes the provider selection over on the next apply.
 
@@ -117,15 +117,48 @@ config, so keep any other fields you rely on:
 
 ## Install
 
-Install the bundle once with `plugin_manager` (`action: install_bundle`, this
-directory or your published source as `target`), then restart DeepSeek Harness
-so the Host half loads. Configure the gateway afterwards on the Plugins screen.
+Requires **DeepSeek Harness 0.2.2-rc.1 or a newer 0.2.x** (the bundle declares
+`dsh.engines.dsh`, so the plugin manager refuses older hosts instead of loading
+a half-working plugin).
+
+**From npm (recommended).** In DSH open **Plugins → Add plugin** and enter:
+
+```
+dsh-9router-web-provider
+```
+
+Pin a version with `dsh-9router-web-provider@1.5.0` if you like. After the
+install, enable the bundle and restart DeepSeek Harness once so the Host half
+loads. npm installs also get the Plugins screen's update check.
+
+**From GitHub.** The same field accepts a repository address:
+
+```
+https://github.com/louis-cai/web-fetch-search-9router
+# or: github:louis-cai/web-fetch-search-9router
+```
+
+This machine must reach GitHub directly or through a proxy; updates mean
+installing again (git installs have no update check).
+
+**From the command line.** The equivalent pnpm operations, run by the DSH CLI:
+
+```sh
+dsh plugin --profile desktop add dsh-9router-web-provider
+# or: dsh plugin --profile desktop add github:louis-cai/web-fetch-search-9router
+```
+
+Either way, finish by opening **Plugins → Installed plugins → 9router web
+provider** and setting the gateway host and API key. The bundle ships no
+credential and stays passive (does not take the web provider selection over)
+until one is configured.
 
 ## Local development
 
-Files are plain ESM; there is no build step. After editing, reinstall the bundle
-with `plugin_manager` (`action: install_bundle`) and restart DSH for Host
-changes; Client changes also need a page refresh.
+Files are plain ESM; there is no build step. For a local checkout, install the
+bundle from this directory with `plugin_manager` (`action: install_bundle`, this
+directory as `target`), then restart DSH for Host changes; Client changes also
+need a page refresh.
 
 ## Scope and limits
 

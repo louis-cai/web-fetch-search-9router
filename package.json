@@ -1,9 +1,30 @@
 {
-  "name": "@local/webfetch-9router",
-  "version": "1.4.2",
-  "private": true,
+  "name": "dsh-9router-web-provider",
+  "version": "1.5.0",
+  "description": "Registers 9router-backed web search and web fetch providers for DeepSeek Harness, with a configuration page on the Plugins screen.",
   "type": "module",
-  "description": "Registers 9router-backed web search and web fetch providers for the agent, with a configuration page on the Plugins screen.",
+  "license": "MIT",
+  "main": "./index.js",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "web-search",
+    "web-fetch",
+    "9router",
+    "provider"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/louis-cai/web-fetch-search-9router.git"
+  },
+  "homepage": "https://github.com/louis-cai/web-fetch-search-9router#readme",
+  "bugs": {
+    "url": "https://github.com/louis-cai/web-fetch-search-9router/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
   "exports": {
     ".": "./index.js",
     "./client": "./client.js",
@@ -29,6 +50,14 @@
         "@deepseek-ai/dsh-client-ui-plugin-manager",
         "@deepseek-ai/dsh-client-ui-renderer"
       ]
+    },
+    "engines": {
+      "dsh": ">=0.2.2-rc.1 <0.4.0-0"
+    },
+    "compatibility": {
+      "dshReleases": {
+        "0.2.2-rc.1": "compatible"
+      }
     }
   }
 }

@@ -10,19 +10,19 @@
  */
 
 window.__ModuleLoader__.load({
-  id: '@local/webfetch-9router',
+  id: 'dsh-9router-web-provider',
   factory(require) {
     const React = require('react')
     const h = React.createElement
 
     /** Client locale namespace for this bundle's copy. */
-    const NS = 'webfetch-9router'
+    const NS = 'dsh-9router-web-provider'
     /** Row config slot key: package name + '#' + the patch row id. */
-    const ROW_CONFIG_KEY = '@local/webfetch-9router#webfetch-9router'
+    const ROW_CONFIG_KEY = 'dsh-9router-web-provider#9router-web-provider'
     /** Bundle config slot key: the package name. */
-    const BUNDLE_CONFIG_KEY = '@local/webfetch-9router'
+    const BUNDLE_CONFIG_KEY = 'dsh-9router-web-provider'
     /** Host bridge this bundle registers (see index.js). */
-    const CONFIG_ENDPOINT = '/webfetch-9router/config'
+    const CONFIG_ENDPOINT = '/9router-web-provider/config'
     /** Search scopes the Host accepts. */
     const SEARCH_TYPE_IDS = ['web', 'news']
     /** Offered result counts; the Host caps at 20. */
@@ -440,7 +440,7 @@ window.__ModuleLoader__.load({
       apply(ctx) {
         ctx.effect(
           () => ctx.locale.register(NS, { en: EN, zh: ZH }),
-          'webfetch-9router: dictionaries',
+          '9router-web-provider: dictionaries',
         )
         const ConnectionCard = makeCard(ctx)
         ctx.slots.inject('plugins.row.config', () =>

@@ -17,7 +17,7 @@
  */
 
 /** Cordis function-plugin name (also the bundle row id). */
-export const name = 'webfetch-9router'
+export const name = '9router-web-provider'
 
 /** The web seam is required; without it the plugin stays inactive. */
 export const inject = ['web']
@@ -39,7 +39,7 @@ const MAX_BODY_BYTES = 16 * 1024
 const MAX_API_KEY_LENGTH = 512
 
 /** Exact pathname of the browser-facing configuration bridge. */
-const CONFIG_ROUTE = '/webfetch-9router/config'
+const CONFIG_ROUTE = '/9router-web-provider/config'
 
 /** Longest accepted search query. */
 const MAX_QUERY_LENGTH = 1024
@@ -631,7 +631,7 @@ export function apply(ctx, rawConfig) {
     runtimes.set(ctx, runtime)
   } else {
     runtime.settings = normalizeConfig(rawConfig)
-    ctx.logger?.info?.('webfetch-9router: re-applied on the same context — settings refreshed in place')
+    ctx.logger?.info?.('9router-web-provider: re-applied on the same context — settings refreshed in place')
   }
   const readSettings = () => runtime.settings
   const available = () => readSettings().apiKey !== ''
@@ -649,7 +649,7 @@ export function apply(ctx, rawConfig) {
     () => () => {
       registrationDisposed = true
     },
-    'webfetch-9router: provider registration guard',
+    '9router-web-provider: provider registration guard',
   )
 
   /**
@@ -664,25 +664,25 @@ export function apply(ctx, rawConfig) {
       if (registrationDisposed) return
       try {
         register()
-        ctx.logger?.info?.(`webfetch-9router: ${label} "${PROVIDER_ID}" registered`)
+        ctx.logger?.info?.(`9router-web-provider: ${label} "${PROVIDER_ID}" registered`)
       } catch (error) {
         const message = String(error?.message ?? error)
         const duplicate =
           error?.code === 'WEB_DUPLICATE_PROVIDER' || /already registered|duplicate/i.test(message)
         if (!duplicate) {
-          ctx.logger?.warn?.(`webfetch-9router: ${label} registration failed — ${message}`)
+          ctx.logger?.warn?.(`9router-web-provider: ${label} registration failed — ${message}`)
           return
         }
         // Same-context re-entry: the registration made by the previous apply()
         // is still ours and now reads the refreshed settings through the shared
         // runtime object, so keep it.
         if (reentered) {
-          ctx.logger?.info?.(`webfetch-9router: ${label} already registered for this context — keeping it`)
+          ctx.logger?.info?.(`9router-web-provider: ${label} already registered for this context — keeping it`)
           return
         }
         if (attempts >= 100) {
           ctx.logger?.warn?.(
-            `webfetch-9router: ${label} "${PROVIDER_ID}" is still registered by another fiber; keeping that registration`,
+            `9router-web-provider: ${label} "${PROVIDER_ID}" is still registered by another fiber; keeping that registration`,
           )
           return
         }
@@ -765,7 +765,7 @@ export function apply(ctx, rawConfig) {
       if (reclaiming) return
       if (!available()) {
         ctx.logger?.info?.(
-          'webfetch-9router: no API key configured — leaving web.searchProvider/web.fetchProvider untouched',
+          '9router-web-provider: no API key configured — leaving web.searchProvider/web.fetchProvider untouched',
         )
         return
       }
@@ -776,7 +776,7 @@ export function apply(ctx, rawConfig) {
         queueProviderSelection(ctx.web, 'searchProvider', PROVIDER_ID, ops)
       } else if (searchCurrent !== PROVIDER_ID) {
         ctx.logger?.warn?.(
-          `webfetch-9router: web_search is served by provider "${searchCurrent}", not "${PROVIDER_ID}"; leaving it. ` +
+          `9router-web-provider: web_search is served by provider "${searchCurrent}", not "${PROVIDER_ID}"; leaving it. ` +
             'Pin it explicitly with a profile patch row: - id: web / config: { searchProvider: 9router }',
         )
       }
@@ -784,13 +784,13 @@ export function apply(ctx, rawConfig) {
         queueProviderSelection(ctx.web, 'fetchProvider', PROVIDER_ID, ops)
       } else if (fetchCurrent !== PROVIDER_ID) {
         ctx.logger?.warn?.(
-          `webfetch-9router: web_fetch is served by provider "${fetchCurrent}", not "${PROVIDER_ID}"; leaving it. ` +
+          `9router-web-provider: web_fetch is served by provider "${fetchCurrent}", not "${PROVIDER_ID}"; leaving it. ` +
             'Pin it explicitly with a profile patch row: - id: web / config: { fetchProvider: 9router }',
         )
       }
       if (ops.length === 0) return
       if (typeof sctx.settings?.mutate !== 'function') {
-        ctx.logger?.warn?.('webfetch-9router: cannot take over the web providers — the settings service is unavailable')
+        ctx.logger?.warn?.('9router-web-provider: cannot take over the web providers — the settings service is unavailable')
         return
       }
       reclaiming = true
@@ -798,7 +798,7 @@ export function apply(ctx, rawConfig) {
         () => {
           reclaiming = false
           ctx.logger?.info?.(
-            `webfetch-9router: agent web tools now use 9router (${ops
+            `9router-web-provider: agent web tools now use 9router (${ops
               .map((op) => `${op.path[0]}=${op.value}`)
               .join(', ')})`,
           )
@@ -806,7 +806,7 @@ export function apply(ctx, rawConfig) {
         (error) => {
           reclaiming = false
           ctx.logger?.warn?.(
-            `webfetch-9router: could not take over the web providers (${error?.message ?? error}); ` +
+            `9router-web-provider: could not take over the web providers (${error?.message ?? error}); ` +
               'set web.searchProvider/web.fetchProvider = 9router in the profile patch',
           )
         },
@@ -821,7 +821,7 @@ export function apply(ctx, rawConfig) {
         try {
           reclaim()
         } catch (error) {
-          ctx.logger?.warn?.(`webfetch-9router: provider re-check failed — ${error?.message ?? error}`)
+          ctx.logger?.warn?.(`9router-web-provider: provider re-check failed — ${error?.message ?? error}`)
         }
       }, 0)
     })
@@ -869,7 +869,7 @@ export function apply(ctx, rawConfig) {
         await editor.edit(entry, (current) => ({ ...current, ...parsed.patch }))
       } catch (error) {
         const detail = error instanceof Error ? error.message : String(error)
-        ctx.logger?.warn?.(`webfetch-9router: config save failed - ${detail}`)
+        ctx.logger?.warn?.(`9router-web-provider: config save failed - ${detail}`)
         sendJson(res, 500, {
           ok: false,
           code: 'config-save-failed',
@@ -889,12 +889,12 @@ export function apply(ctx, rawConfig) {
     try {
       wctx.effect(
         () => webServer.register({ kind: 'exact', path: CONFIG_ROUTE, handler }),
-        `webfetch-9router: GET/POST ${CONFIG_ROUTE}`,
+        `9router-web-provider: GET/POST ${CONFIG_ROUTE}`,
       )
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
       if (!/duplicate .*route/i.test(message)) throw error
-      ctx.logger?.info?.('webfetch-9router: configuration route already registered — keeping it')
+      ctx.logger?.info?.('9router-web-provider: configuration route already registered — keeping it')
     }
   })
 }
