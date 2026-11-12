@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "9router web provider",
+    "description": "Registers 9router as the web search and web fetch provider for the agent's built-in web_search and web_fetch tools. Configure the gateway on the Plugins screen."
+  }
+}

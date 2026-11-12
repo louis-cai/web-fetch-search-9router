@@ -1,0 +1,35 @@
+# Bundle layer for @local/webfetch-9router.
+#
+# This bundle does not add a sidebar panel. Its Host plugin registers two
+# providers with the Harness web seam (ctx.web):
+#   - search provider "9router" -> 9router POST /v1/search
+#   - fetch provider  "9router" -> 9router POST /v1/web/fetch
+# and points the web service's provider selection at them, so the agent's
+# built-in web_search and web_fetch tools run through 9router.
+#
+# The takeover only fires when the selection is unset or still the shipped
+# default (deepseek-official / http). An explicitly chosen provider is left
+# alone. To pin this provider by hand, add the following to the profile's own
+# cordis.patch.yml (a matching override replaces the whole web config, so keep
+# any other web.* fields):
+#
+#   - id: web
+#     name: '@deepseek-ai/dsh-web'
+#     config:
+#       searchProvider: 9router
+#       fetchProvider: 9router
+#
+# The values below are the bundle defaults: a 9router gateway on its usual
+# local port and no credential. Configure the real host and API key on the
+# Plugins screen (Plugins -> Installed plugins -> 9router web provider), which
+# writes them into the profile patch; the plugin does not take the web provider
+# selection over until an API key is configured.
+- insert:
+    - id: webfetch-9router
+      name: '@local/webfetch-9router'
+      config:
+        baseUrl: 'http://localhost:20128'
+        apiKey: ''
+        timeoutMs: 30000
+        searchType: web
+        defaultMaxResults: 5
